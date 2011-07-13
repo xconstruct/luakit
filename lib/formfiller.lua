@@ -93,8 +93,7 @@ local insert_function = [=[
                 catch(err) { }
                 var form;
                 while(form=xp.iterateNext()) {
-                    var re = new RegExp(foAction);
-                    if(form.action.search(re) != -1 && form.id == foId && foName == form.name) {
+                    if(form.action.indexOf(foAction) != -1 && form.id == foId && foName == form.name) {
                         var xp_inp;
                         try {
                             xp_inp = allFrames[j].document.evaluate(".//input[@name='"+fname+"']|.//textarea[@name='"+fname+"']", form, null, XPathResult.ANY_TYPE, null);
@@ -137,8 +136,7 @@ local submit_function = [=[
                 catch(err) { }
                 var form;
                 while(form=xp.iterateNext()) {
-                    var re = new RegExp(foAction);
-                    if(form.action.search(re) != -1 && form.id == foId && foName == form.name) {
+                    if(form.action.indexOf(foAction) != -1 && form.id == foId && foName == form.name) {
                         try {
                             var xp_res=allFrames[j].document.evaluate(".//input[@type='submit']", form, null, XPathResult.ANY_TYPE,null);
                         } catch (err) { }
