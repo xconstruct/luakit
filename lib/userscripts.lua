@@ -18,9 +18,15 @@ local util = require("lousy.util")
 local lfs = require("lfs")
 local capi = { luakit = luakit }
 
+local us_globals = globals.userscripts or {}
+
 --- Evaluates and manages userscripts.
 -- JavaScript userscripts must end in <code>.user.js</code>
 module("userscripts")
+
+--- The directory, in which to search for userscripts.
+-- By default, this is $XDG_DATA_HOME/luakit/scripts
+dir = us_globals.dir or capi.luakit.data_dir .. "/scripts"
 
 -- Pure JavaScript implementation of greasemonkey methods commonly used
 -- in chome/firefox userscripts.
@@ -130,10 +136,6 @@ local scripts = {}
 
 --- Stores information on the currently loaded scripts on a webview widget
 local lstate = setmetatable({}, { __mode = "k" })
-
---- The directory, in which to search for userscripts.
--- By default, this is $XDG_DATA_HOME/luakit/scripts
-dir = capi.luakit.data_dir .. "/scripts"
 
 -- Userscript class methods
 local prototype = {

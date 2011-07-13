@@ -22,10 +22,12 @@ local add_binds, add_cmds = add_binds, add_cmds
 local new_mode, menu_binds = new_mode, menu_binds
 local capi = { luakit = luakit }
 
+local qm_globals = globals.quickmarks or {}
+
 module("quickmarks")
 
 local qmarks
-local quickmarks_file = capi.luakit.data_dir .. '/quickmarks'
+local quickmarks_file = qm_globals.file or capi.luakit.data_dir .. '/quickmarks'
 
 local function check_token(token)
     assert(string.match(tostring(token), "^(%w)$"), "invalid token: " .. tostring(token))
