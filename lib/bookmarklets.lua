@@ -33,14 +33,14 @@ local return_selected = [=[
         container.appendChild(range.cloneContents());
         elements = container.getElementsByTagName('a');
         for (idx in elements) {
-            if (elements[idx].href && elements[idx].href.match("/^javascript:/") {
+            if (elements[idx].href && elements[idx].href.match("/^javascript:/")) {
                 return elements[idx].href;
             }
         }
         // Check for links which contain the selection
         container = range.startContainer;
         while (container != document) {
-            if (container.href && container.href.match("/^javascript:/") {
+            if (container.href && container.href.match("/^javascript:/")) {
                 return container.href;
             }
             container = container.parentNode;
