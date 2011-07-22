@@ -181,12 +181,13 @@ end
 local function parse_header(header, file)
     local ret = { file = file, include = {}, exclude = {} }
     for i, line in ipairs(util.string.split(header, "\n")) do
-        -- Parse `// @key value` line in header.
+        local singles = { name = true, description = true,
+            version = true, homepage = true }
+        -- Parse `// @key value` lines in header.
         local key, val = string.match(line, "^// @([%w%-]+)%s+(.+)$")
         if key then
             val = util.string.strip(val or "")
-            -- Populate header table
-            if key == "name" or key == "description" or key == "version" or key == "homepage" then
+            if singles[key] then
                 -- Only grab the first of its kind
                 if not ret[key] then ret[key] = val end
             elseif key == "include" or key == "exclude" then
@@ -194,8 +195,6 @@ local function parse_header(header, file)
             elseif key == "run-at" and val == "document-start" then
                 ret.on_start = true
             end
-        else
-            warn("(userscripts.lua): Invalid line in header: %s:%d:%s", file, i, line)
         end
     end
     return ret
@@ -213,6 +212,7 @@ local function load_js(file)
     if header then
         local script = parse_header(header, file)
         script.js = js
+        script.file = file
         scripts[file] = setmetatable(script, { __index = prototype })
     else
         warn("(userscripts.lua): Invalid userscript header in file: %s", file)
@@ -246,7 +246,6 @@ function save(file, js)
     if not os.exists(dir) then
         util.mkdir(dir)
     end
-
     local f = io.open(dir .. "/" .. file, "w")
     f:write(js)
     f:close()
@@ -278,15 +277,16 @@ end
 local cmd = bind.cmd
 add_cmds({
     -- Saves the content of the open view as an userscript
-    cmd({"userscriptinstall", "usi[nstall]"}, function (w, a)
+    cmd({"userscriptinstall", "usi", "usinstall"}, function (w, a)
         local view = w:get_current()
-        local file = string.match(view.uri, "/(%w+%.user%.js)$")
+        local file = string.match(view.uri, "/([^/]+%.user%.js)$")
         if (not file) then return w:error("URL is not a *.user.js file") end
-
+        if view:loading() then w:error("Wait for script to finish loading first.") end
         local js = util.unescape(view:eval_js("document.body.getElementsByTagName('pre')[0].innerHTML", "(userscripts:install)"))
         local header = string.match(js, "//%s*==UserScript==%s*\n(.*)\n//%s*==/UserScript==")
         if not header then return w:error("Could not find userscript header") end
         save(file, js)
+        w:notify("Installed userscript to: " .. dir .. "/" .. file)
     end),
 
     cmd({"userscripts", "uscripts"}, function (w) w:set_mode("uscriptlist") end),
@@ -299,10 +299,15 @@ new_mode("uscriptlist", {
         for file, script in pairs(scripts) do
             local active = script:match(w:get_current().uri) and "*" or " "
             local title = (script.name or file) .. " " .. (script.version or "")
-            table.insert(rows, { " " .. active .. title, " " .. script.description, file = file })
+            table.insert(rows, { " " .. active .. title, " " .. script.description, script = script })
+        end
+        if #rows == 1 then
+            w:notify(string.format("No userscripts installed. Use `:usinstall`"
+                .. "or place .user.js files in %q manually.", dir))
+            return
         end
         w.menu:build(rows)
-        w:notify("Use j/k to move, d delete, o to visit website, t tabopen, w winopen. '*' signalizes active scripts.", false)
+        w:notify("Use j/k to move, d delete, o visit website, t tabopen, w winopen. '*' indicates active scripts.", false)
     end,
 
     leave = function (w)
@@ -315,8 +320,8 @@ add_binds("uscriptlist", util.table.join({
     -- Delete userscript
     key({}, "d", function (w)
         local row = w.menu:get()
-        if row and row.file then
-            del(row.file)
+        if row and row.script then
+            del(row.script.file)
             w.menu:del()
         end
     end),
@@ -324,33 +329,24 @@ add_binds("uscriptlist", util.table.join({
     -- Open userscript homepage
     key({}, "o", function (w)
         local row = w.menu:get()
-        if row and row.file then
-            local homepage = scripts[row.file] and scripts[row.file].homepage
-            if homepage then
-                w:navigate(homepage)
-            end
+        if row and row.script and row.script.homepage then
+            w:navigate(row.script.homepage)
         end
     end),
 
     -- Open userscript homepage in new tab
     key({}, "t", function (w)
         local row = w.menu:get()
-        if row and row.file then
-            local homepage = scripts[row.file] and scripts[row.file].homepage
-            if homepage then
-                w:new_tab(homepage, false)
-            end
+        if row and row.script and row.script.homepage then
+            w:new_tab(row.script.homepage, false)
         end
     end),
 
     -- Open userscript homepage in new window
     key({}, "w", function (w)
         local row = w.menu:get()
-        if row and row.file then
-            local homepage = scripts[row.file] and scripts[row.file].homepage
-            if homepage then
-                window.new(homepage)
-            end
+        if row and row.script and row.script.homepage then
+            window.new(row.script.homepage)
         end
     end),
 
