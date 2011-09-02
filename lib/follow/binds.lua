@@ -41,6 +41,7 @@ add_binds("normal", {
         w:start_follow(modes.uri, "yank", function (uri)
             uri = string.gsub(uri, " ", "%%20")
             capi.luakit.set_selection(uri)
+            capi.luakit.set_selection("clipboard", uri)
             w:notify("Yanked uri: " .. uri)
         end)
     end),
@@ -49,6 +50,7 @@ add_binds("normal", {
     buf("^;Y$", function (w,b,m)
         w:start_follow(modes.desc, "yank desc", function (desc)
             capi.luakit.set_selection(desc)
+            capi.luakit.set_selection("clipboard", desc)
             w:notify("Yanked desc: " .. desc)
         end)
     end),
@@ -139,16 +141,17 @@ add_binds("normal", {
     end),
 
 	-- Set command `:qmark <cursor> <uri>`
-	buf("^;M$", function (w,b,m)
-		w:start_follow(modes.uri, "quickmark", function (uri)
-			w:enter_cmd(":qmark  " .. uri, { pos = 7 })
-		end)
-	end),
+    buf("^;M%w$", function (w,b,m)
+        local token = string.match(b, "^;M(.)$")
+        w:start_follow(modes.uri, ":qmark " .. token, function (uri)
+            w:enter_cmd(string.format(":qmark %s %s", token, uri))
+        end)
+    end),
 
-	-- Set command `:bookmark <uri> `
-	buf("^;B$", function (w,b,m)
-		w:start_follow(modes.uri, ":bookmark", function (uri)
-			w:enter_cmd(":bookmark " .. uri .. " ")
-		end)
-	end),
+    -- Set command `:bookmark <uri> `
+    buf("^;B$", function (w,b,m)
+        w:start_follow(modes.uri, ":bookmark", function (uri)
+            w:enter_cmd(":bookmark " .. uri .. " ")
+        end)
+    end),
 })
