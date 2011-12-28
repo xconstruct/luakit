@@ -46,14 +46,14 @@ have lua >= 5.1 installed)
 endif
 
 # Packages required to build luakit
-PKGS := gtk+-2.0 gthread-2.0 webkit-1.0 javascriptcoregtk-1.0 sqlite3 $(LUA_PKG_NAME)
+PKGS := gtk+-3.0 gthread-2.0 webkitgtk-3.0 javascriptcoregtk-3.0 sqlite3 $(LUA_PKG_NAME)
 
 # Build luakit with libunqiue bindings (for writing simple single-
 # instance applications using dbus).
 # To disable use `make USE_UNIQUE=0`.
 ifneq ($(USE_UNIQUE),0)
 CPPFLAGS += -DWITH_UNIQUE
-PKGS     += unique-1.0
+PKGS     += unique-3.0
 endif
 
 # Should we load relative config paths first?
