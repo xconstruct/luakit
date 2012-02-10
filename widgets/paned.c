@@ -112,8 +112,7 @@ widget_paned(widget_t *w, luakit_token_t token)
     w->index = luaH_paned_index;
     w->destructor = widget_destructor;
 
-    w->widget = (token == L_TK_VPANED) ? gtk_vpaned_new() :
-            gtk_hpaned_new();
+    w->widget = gtk_paned_new((token == L_TK_VPANED) ? GTK_ORIENTATION_VERTICAL: GTK_ORIENTATION_HORIZONTAL);
 
     g_object_set_data(G_OBJECT(w->widget), "lua_widget", (gpointer) w);
     g_object_connect(G_OBJECT(w->widget),

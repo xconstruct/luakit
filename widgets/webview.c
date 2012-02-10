@@ -581,11 +581,11 @@ luaH_webview_newindex(lua_State *L, luakit_token_t token)
 }
 
 static gboolean
-expose_cb(GtkWidget* UNUSED(widget), GdkEventExpose* UNUSED(e), widget_t *w)
+draw_cb(GtkWidget* UNUSED(widget), cairo_t* UNUSED(cr), widget_t *w)
 {
     lua_State *L = globalconf.L;
     luaH_object_push(L, w->ref);
-    luaH_object_emit_signal(L, -1, "expose", 0, 0);
+    luaH_object_emit_signal(L, -1, "draw", 0, 0);
     lua_pop(L, 1);
     return FALSE;
 }
@@ -773,6 +773,26 @@ scroll_event_cb(GtkWidget* UNUSED(v), GdkEventScroll *ev, widget_t *w)
     return catch;
 }
 
+static gboolean
+size_allocate_cb(GtkWidget* v, GtkAllocation *all, widget_t *w)
+{
+/*    printf("webview size allocation : %d, %d\n", all->width, all->height);*/
+    GtkAllocation nal;
+    nal.x       = all->x;
+    nal.y       = all->y;
+    nal.width   = all->width;
+    nal.height  = 700;
+    gtk_widget_size_allocate(v, &nal);
+    return FALSE;
+}
+
+static gboolean
+configure_event_cb(GtkWidget* v, GdkEventConfigure *ev, widget_t *w)
+{
+/*    printf("webview configure : %d, %d\n", ev->width, ev->height);*/
+    return TRUE;
+}
+
 static void
 webview_destructor(widget_t *w)
 {
@@ -833,8 +853,7 @@ widget_webview(widget_t *w, luakit_token_t UNUSED(token))
       "signal::create-web-view",                      G_CALLBACK(create_web_view_cb),           w,
       "signal::document-load-finished",               G_CALLBACK(document_load_finished_cb),    w,
       "signal::download-requested",                   G_CALLBACK(download_request_cb),          w,
-      // XXX expose-event was replaced with draw.
-      "signal::draw",                         G_CALLBACK(expose_cb),                    w,
+      "signal::draw",                                 G_CALLBACK(draw_cb),                      w,
       "signal::focus-in-event",                       G_CALLBACK(focus_cb),                     w,
       "signal::focus-out-event",                      G_CALLBACK(focus_cb),                     w,
       "signal::hovering-over-link",                   G_CALLBACK(link_hover_cb),                w,
@@ -848,6 +867,8 @@ widget_webview(widget_t *w, luakit_token_t UNUSED(token))
       "signal::populate-popup",                       G_CALLBACK(populate_popup_cb),            w,
       "signal::resource-request-starting",            G_CALLBACK(resource_request_starting_cb), w,
       "signal::scroll-event",                         G_CALLBACK(scroll_event_cb),              w,
+      "signal::size-allocate",                        G_CALLBACK(size_allocate_cb),             w,
+      "signal::configure-event",                      G_CALLBACK(configure_event_cb),           w,
       NULL);
 
     /* show widgets */

@@ -72,7 +72,11 @@ CPPFLAGS := -DVERSION=\"$(VERSION)\" $(CPPFLAGS)
 
 # Generate compiler options
 INCS     := $(shell pkg-config --cflags $(PKGS)) -I./
-CFLAGS   := -std=gnu99 -ggdb -W -Wall -Wextra $(INCS) $(CFLAGS)
+CFLAGS   := -std=gnu99 -ggdb -W -Wall -Wextra $(INCS) $(CFLAGS)\
+			-DGTK_DISABLE_SINGLE_INCLUDES\
+			-DGDK_DISABLE_DEPRECATED\
+			-DGTK_DISABLE_DEPRECATED\
+			-DGSEAL_ENABLE
 
 # Generate linker options
 LIBS     := $(shell pkg-config --libs $(PKGS))
