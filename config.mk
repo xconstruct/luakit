@@ -46,14 +46,24 @@ have lua >= 5.1 installed)
 endif
 
 # Packages required to build luakit
-PKGS := gtk+-3.0 gthread-2.0 webkitgtk-3.0 javascriptcoregtk-3.0 sqlite3 $(LUA_PKG_NAME)
+PKGS := gthread-2.0 sqlite3 $(LUA_PKG_NAME)
+ifeq ($(USE_GTK3),1)
+	PKGS += gtk+-3.0 webkitgtk-3.0 javascriptcoregtk-3.0
+else
+	PKGS += gtk+-2.0 webkit-1.0 javascriptcoregtk-1.0
+endif
+
 
 # Build luakit with libunqiue bindings (for writing simple single-
 # instance applications using dbus).
 # To disable use `make USE_UNIQUE=0`.
 ifneq ($(USE_UNIQUE),0)
 CPPFLAGS += -DWITH_UNIQUE
-PKGS     += unique-3.0
+ifeq ($(USE_GTK3),1)
+	PKGS     += unique-3.0
+else
+	PKGS     += unique-1.0
+endif
 endif
 
 # Should we load relative config paths first?
@@ -69,14 +79,21 @@ endif
 
 # Add pre-processor flags
 CPPFLAGS := -DVERSION=\"$(VERSION)\" $(CPPFLAGS)
+ifeq ($(USE_GTK3),1)
+CPPFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES\
+			-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES\
+			-DGDK_DISABLE_SINGLE_INCLUDES\
+			-DG_DISABLE_SINGLE_INCLUDES\
+			-DGDK_DISABLE_DEPRECATED\
+			-DGTK_DISABLE_DEPRECATED\
+			-DGDK_PIXBUF_DISABLE_DEPRECATED\
+			-DG_DISABLE_DEPRECATED\
+			-DGSEAL_ENABLE
+endif
 
 # Generate compiler options
 INCS     := $(shell pkg-config --cflags $(PKGS)) -I./
-CFLAGS   := -std=gnu99 -ggdb -W -Wall -Wextra $(INCS) $(CFLAGS)\
-			-DGTK_DISABLE_SINGLE_INCLUDES\
-			-DGDK_DISABLE_DEPRECATED\
-			-DGTK_DISABLE_DEPRECATED\
-			-DGSEAL_ENABLE
+CFLAGS   := -std=gnu99 -ggdb -W -Wall -Wextra $(INCS) $(CFLAGS)
 
 # Generate linker options
 LIBS     := $(shell pkg-config --libs $(PKGS))
