@@ -2,6 +2,8 @@
 -- Window class --
 ------------------
 
+require "lfs"
+
 -- Window class table
 window = {}
 
@@ -240,6 +242,12 @@ window.init_funcs = {
         local path = (luakit.dev_paths and os.exists("./extras/luakit.png")) or
             os.exists("/usr/share/pixmaps/luakit.png")
         if path then w.win.icon = path end
+    end,
+
+    clear_urgency_hint = function (w)
+        w.win:add_signal("focus", function ()
+            w.win.urgency_hint = false
+        end)
     end,
 }
 
