@@ -21,6 +21,9 @@
 #include "luah.h"
 #include "widgets/common.h"
 #include <stdlib.h>
+#if GTK_CHECK_VERSION(3,0,0)
+#include <gtk/gtkx.h>
+#endif
 
 static void
 plug_added_cb(GtkSocket* UNUSED(socket), widget_t *w)
@@ -65,7 +68,7 @@ luaH_socket_newindex(lua_State *L, luakit_token_t token)
     widget_t *w = luaH_checkwidget(L, 1);
     if (token == L_TK_ID) {
         gint id = luaL_checkint(L, 2);
-        gtk_socket_add_id(GTK_SOCKET(w->widget), (GdkNativeWindow) id);
+        gtk_socket_add_id(GTK_SOCKET(w->widget), id);
     }
     return 0;
 }

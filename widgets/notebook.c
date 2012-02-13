@@ -242,7 +242,7 @@ page_removed_cb(GtkNotebook* UNUSED(n), GtkWidget *widget, guint UNUSED(i),
 }
 
 static void
-switch_cb(GtkNotebook *n, GtkNotebookPage* UNUSED(p), guint i, widget_t *w)
+switch_cb(GtkNotebook *n, GtkWidget* UNUSED(p), guint i, widget_t *w)
 {
     GtkWidget *widget = gtk_notebook_get_nth_page(GTK_NOTEBOOK(n), i);
     widget_t *child = g_object_get_data(G_OBJECT(widget), "lua_widget");

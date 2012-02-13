@@ -69,7 +69,7 @@ gint luaH_widget_set_child(lua_State*, widget_t*);
 gint luaH_widget_show(lua_State*);
 
 void add_cb(GtkContainer*, GtkWidget*, widget_t*);
-void parent_set_cb(GtkWidget*, GtkObject*, widget_t*);
+void parent_set_cb(GtkWidget*, GtkWidget*, widget_t*);
 void remove_cb(GtkContainer*, GtkWidget*, widget_t*);
 void widget_destructor(widget_t*);
 
