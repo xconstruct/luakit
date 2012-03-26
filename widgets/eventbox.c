@@ -22,13 +22,10 @@
 #include "widgets/common.h"
 
 static gint
-luaH_eventbox_index(lua_State *L, luakit_token_t token)
+luaH_eventbox_index(lua_State *L, widget_t *w, luakit_token_t token)
 {
-    widget_t *w = luaH_checkwidget(L, 1);
-
-    switch(token)
-    {
-      LUAKIT_WIDGET_INDEX_COMMON
+    switch(token) {
+      LUAKIT_WIDGET_INDEX_COMMON(w)
       LUAKIT_WIDGET_BIN_INDEX_COMMON(w)
       LUAKIT_WIDGET_CONTAINER_INDEX_COMMON(w)
 
@@ -42,10 +39,9 @@ luaH_eventbox_index(lua_State *L, luakit_token_t token)
 }
 
 static gint
-luaH_eventbox_newindex(lua_State *L, luakit_token_t token)
+luaH_eventbox_newindex(lua_State *L, widget_t *w, luakit_token_t token)
 {
     size_t len;
-    widget_t *w = luaH_checkwidget(L, 1);
     const gchar *tmp;
 #if GTK_CHECK_VERSION(3,0,0)
     GdkRGBA c;
@@ -53,8 +49,8 @@ luaH_eventbox_newindex(lua_State *L, luakit_token_t token)
     GdkColor c;
 #endif
 
-    switch(token)
-    {
+    switch(token) {
+      LUAKIT_WIDGET_NEWINDEX_COMMON(w)
       LUAKIT_WIDGET_BIN_NEWINDEX_COMMON(w)
 
       case L_TK_BG:
@@ -86,7 +82,6 @@ widget_eventbox(widget_t *w, luakit_token_t UNUSED(token))
     w->destructor = widget_destructor;
 
     w->widget = gtk_event_box_new();
-    g_object_set_data(G_OBJECT(w->widget), "lua_widget", (gpointer) w);
     gtk_widget_show(w->widget);
 
     g_object_connect(G_OBJECT(w->widget),

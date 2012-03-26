@@ -27,6 +27,7 @@ function window.build()
         ebox   = eventbox(),
         paned  = vpaned(),
         layout = vbox(),
+        paned  = widget{type="vpaned"},
         tabs   = notebook(),
         -- Tablist widget
         tablist = lousy.widget.tablist(),
@@ -69,8 +70,8 @@ function window.build()
     }
 
     -- Assemble window
-    w.paned:pack1(w.layout)
     w.ebox.child = w.paned
+    w.paned:pack1(w.layout)
     w.win.child = w.ebox
 
     -- Pack tablist

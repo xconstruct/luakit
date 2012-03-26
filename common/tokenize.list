@@ -44,6 +44,8 @@ enable_caret_browsing
 enable_default_context_menu
 enable_developer_extras
 enable_dom_paste
+show_inspector
+close_inspector
 enable_file_access_from_file_uris
 enable_html5_database
 enable_html5_local_storage
@@ -188,7 +190,6 @@ verbose
 version
 videos_dir
 view_source
-VIDEOS
 visible
 vpaned
 webkit_user_agent_version
