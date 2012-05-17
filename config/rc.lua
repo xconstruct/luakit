@@ -74,6 +74,9 @@ require "cookies"
 -- Add uzbl-like form filling
 require "formfiller"
 
+-- Add webinspector
+require "webinspector"
+
 -- Add proxy support & manager
 require "proxy"
 
@@ -98,6 +101,32 @@ require "bookmarks"
 -- Add download support
 require "downloads"
 require "downloads_chrome"
+downloads.default_dir = "/tmp"
+
+-- Auto open downloads
+downloads.add_signal("auto-open-filter", function(destination, mime_type)
+    return mime_type == "application/pdf"
+end)
+
+-- Open handler
+downloads.add_signal("open-file", function(destination, mime_type, w)
+    luakit.spawn(("xdg-open %q"):format(destination))
+    return true
+end)
+
+-- Download location
+downloads.add_signal("download-location", function (uri, file)
+    if not file or file == "" then
+        file = (string.match(uri, "/([^/]+)$") 
+            or string.match(uri, "^%w+://(.+)") 
+            or string.gsub(uri, "/", "_")
+            or "untitled")
+    end
+    for _, w in pairs(window.bywidget) do
+        w:notify(("Saved '%s' in %s"):format(file, downloads.default_dir))
+    end
+    return downloads.default_dir .. "/" .. file
+end) 
 
 -- Add vimperator-like link hinting & following
 -- (depends on downloads)
@@ -105,8 +134,8 @@ require "follow"
 
 -- To use a custom character set for the follow hint labels un-comment and
 -- modify the following:
---local s = follow.styles
---follow.style = s.sort(s.reverse(s.charset("asdfqwerzxcv"))) -- I'm a lefty
+local s = follow.styles
+follow.style = s.sort(s.reverse(s.charset("asdfqwerzxcv")))
 
 -- Add command history
 require "cmdhist"
@@ -134,6 +163,8 @@ require "follow_selected"
 require "go_input"
 require "go_next_prev"
 require "go_up"
+
+pcall(require, "start")
 
 -----------------------------
 -- End user script loading --
