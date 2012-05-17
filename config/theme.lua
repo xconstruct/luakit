@@ -7,7 +7,7 @@ local theme = {}
 -- Default settings
 theme.font = "monospace normal 9"
 theme.fg   = "#fff"
-theme.bg   = "#000"
+theme.bg   = "#202020"
 
 -- Genaral colours
 theme.success_fg = "#0f0"
@@ -40,7 +40,7 @@ theme.proxy_inactive_menu_bg    = '#FFF'
 
 -- Statusbar specific
 theme.sbar_fg         = "#fff"
-theme.sbar_bg         = "#000"
+theme.sbar_bg         = "#202020"
 
 -- Downloadbar specific
 theme.dbar_fg         = "#fff"
@@ -64,6 +64,22 @@ theme.loading_bg        = "#000"
 -- Trusted/untrusted ssl colours
 theme.trust_fg          = "#0F0"
 theme.notrust_fg        = "#F00"
+
+theme.follow = {
+    focus_bg      = "#00ff00";
+    normal_bg     = "#ffff99";
+    opacity       = 0.3;
+    border        = "1px dotted #000000";
+    frame_border  = "2px solid #880000";
+    tick_frame_bg = "#880000";
+    tick_fg       = "#ffffff";
+    tick_bg       = "#202020";
+    tick_border   = "2px dashed #000000";
+    tick_opacity  = 0.8;
+    tick_font     = "11px monospace bold";
+    vert_offset   = 0;
+    horiz_offset  = -10;
+}
 
 return theme
 -- vim: et:sw=4:ts=8:sts=4:tw=80
