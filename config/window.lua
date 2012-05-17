@@ -37,6 +37,7 @@ function window.build()
             l = {
                 layout = hbox(),
                 ebox   = eventbox(),
+                mode   = label(),
                 uri    = label(),
                 hist   = label(),
                 loaded = label(),
@@ -80,6 +81,7 @@ function window.build()
 
     -- Pack left-aligned statusbar elements
     local l = w.sbar.l
+    l.layout:pack(l.mode)
     l.layout:pack(l.uri)
     l.layout:pack(l.hist)
     l.layout:pack(l.loaded)
@@ -197,6 +199,7 @@ window.init_funcs = {
 
         -- Set foregrounds
         for wi, v in pairs({
+            [s.l.mode]   = theme.mode_sbar_fg,
             [s.l.uri]    = theme.uri_sbar_fg,
             [s.l.hist]   = theme.hist_sbar_fg,
             [s.l.loaded] = theme.sbar_loaded_fg,
@@ -219,6 +222,7 @@ window.init_funcs = {
 
         -- Set fonts
         for wi, v in pairs({
+            [s.l.mode]   = theme.mode_sbar_font,
             [s.l.uri]    = theme.uri_sbar_font,
             [s.l.hist]   = theme.hist_sbar_font,
             [s.l.loaded] = theme.sbar_loaded_font,
@@ -420,6 +424,15 @@ window.methods = {
         if text then
             prompt.text = lousy.util.escape(text)
             prompt:show()
+        end
+    end,
+
+    set_mode_line = function (w, text)
+        local mode = w.sbar.l.mode
+        mode:hide()
+        if text then
+            mode.text = lousy.util.escape(text)
+            mode:show()
         end
     end,
 
