@@ -1,7 +1,6 @@
 -- Global variables for luakit
 globals = {
-    homepage            = "http://luakit.org/",
- -- homepage            = "http://github.com/mason-larobina/luakit",
+    homepage            = "file://"..luakit.config_dir.."/start/index.html",
     scroll_step         = 40,
     zoom_step           = 0.1,
     max_cmd_history     = 100,
@@ -19,9 +18,10 @@ globals = {
 local _, arch = luakit.spawn_sync("uname -sm")
 -- Only use the luakit version if in date format (reduces identifiability)
 local lkv = string.match(luakit.version, "^(%d+.%d+.%d+)")
-globals.useragent = string.format("Mozilla/5.0 (%s) AppleWebKit/%s+ (KHTML, like Gecko) WebKitGTK+/%s luakit%s",
+globals.useragent = string.format("Mozilla/5.0 (X11; %s) AppleWebKit/%s (KHTML, like Gecko) Chrome/15.0.872.0 Safari/%s",
     string.sub(arch, 1, -2), luakit.webkit_user_agent_version,
-    luakit.webkit_version, (lkv and ("/" .. lkv)) or "")
+    --luakit.webkit_version, (lkv and ("/" .. lkv)) or "",
+    luakit.webkit_user_agent_version)
 
 -- Search common locations for a ca file which is used for ssl connection validation.
 local ca_files = {
@@ -51,17 +51,23 @@ soup.accept_policy = cookie_policy.always
 -- it to avoid collisions with lua's string.format characters.
 -- See: http://www.lua.org/manual/5.1/manual.html#pdf-string.format
 search_engines = {
-    luakit      = "http://luakit.org/search/index/luakit?q=%s",
-    google      = "http://google.com/search?q=%s",
-    duckduckgo  = "http://duckduckgo.com/?q=%s",
-    wikipedia   = "http://en.wikipedia.org/wiki/Special:Search?search=%s",
-    debbugs     = "http://bugs.debian.org/%s",
-    imdb        = "http://imdb.com/find?s=all&q=%s",
-    sourceforge = "http://sf.net/search/?words=%s",
+    g           = "https://google.com/search?hl=en&q=%s",
+    d           = "https://duckduckgo.com/?ko=s&kv=-1&kj=ct&q=%s",
+    gi          = "https://google.com/searchbyimage?hl=en&image_url=%s",
+    a           = "https://google.com/search?q=site:archlinux.org+%s",
+    uni         = "https://google.com/search?q=site:uni-hannover.de+%s",
+    aur         = "https://aur.archlinux.org/packages.php?O=0&K=%s&do_Search=Go",
+    we          = "https://en.wikipedia.org/wiki/Special:Search?search=%s",
+    wp          = "https://de.wikipedia.org/wiki/Special:Search?search=%s",
+    en          = "http://dict.cc/?s=%s",
+    yt          = "https://www.youtube.com/results?search_query=%s",
+    lk          = "http://luakit.org/search/index/luakit?q=%s",
+    r           = "http://reddit.com/r/%s",
+    b           = "http://bin-o-bookmarks.appspot.com/follow/?q=%s",
 }
 
 -- Set google as fallback search engine
-search_engines.default = search_engines.google
+search_engines.default = search_engines.d
 -- Use this instead to disable auto-searching
 --search_engines.default = "%s"
 

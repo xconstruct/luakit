@@ -196,11 +196,7 @@ webview.init_funcs = {
         -- with default behaviour
         view:add_signal("new-window-decision", function (v, uri, reason)
             info("New window decision: %s (%s)", uri, reason)
-            if reason == "link-clicked" then
-                window.new({uri})
-            else
-                w:new_tab(uri)
-            end
+            w:new_tab(uri)
             return true
         end)
     end,
