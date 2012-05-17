@@ -87,6 +87,7 @@ for name, func in pairs({
 new_mode("normal", {
     enter = function (w)
         w:set_prompt()
+        w:set_mode_line()
         w:set_input()
     end,
 })
@@ -94,7 +95,8 @@ new_mode("normal", {
 -- Setup insert mode
 new_mode("insert", {
     enter = function (w)
-        w:set_prompt("-- INSERT --")
+        w:set_prompt()
+        w:set_mode_line("[Ins]")
         w:set_input()
     end,
     -- Send key events to webview
@@ -103,7 +105,8 @@ new_mode("insert", {
 
 new_mode("passthrough", {
     enter = function (w)
-        w:set_prompt("-- PASS THROUGH --")
+        w:set_prompt()
+        w:set_mode_line("[Pass]")
         w:set_input()
     end,
     -- Send key events to webview
@@ -118,6 +121,7 @@ new_mode("passthrough", {
 new_mode("command", {
     enter = function (w)
         w:set_prompt()
+        w:set_mode_line()
         w:set_input(":")
     end,
     changed = function (w, text)
@@ -142,6 +146,7 @@ new_mode("command", {
 new_mode("lua", {
     enter = function (w)
         w:set_prompt(">")
+        w:set_mode_line()
         w:set_input("")
     end,
     activate = function (w, text)
