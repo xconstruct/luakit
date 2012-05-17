@@ -81,8 +81,8 @@ add_binds("all", {
     end),
 
     -- Zoom binds
-    but({"Control"}, 4, function (w, m) w:zoom_in()  end),
-    but({"Control"}, 5, function (w, m) w:zoom_out() end),
+    but({"Control"}, 4, function (w, m) w:zoom_in(nil, true)  end),
+    but({"Control"}, 5, function (w, m) w:zoom_out(nil, true) end),
 
     -- Horizontal mouse scroll binds
     but({"Shift"},   4, function (w, m) w:scroll{ x = less } end),
@@ -147,11 +147,12 @@ add_binds("normal", {
                                     end),
 
     -- Zooming
-    key({},          "+",           function (w, m)    w:zoom_in(zoom_step  * m.count)       end, {count=1}),
-    key({},          "-",           function (w, m)    w:zoom_out(zoom_step * m.count)       end, {count=1}),
-    key({},          "=",           function (w, m)    w:zoom_set() end),
-    buf("^z[iI]$",                  function (w, b, m) w:zoom_in(zoom_step  * m.count, b == "zI") end, {count=1}),
-    buf("^z[oO]$",                  function (w, b, m) w:zoom_out(zoom_step * m.count, b == "zO") end, {count=1}),
+    key({},          "+",           function (w, m)    w:zoom_in(zoom_step  * m.count, true) end, {count=1}),
+    key({},          "-",           function (w, m)    w:zoom_out(zoom_step * m.count, true) end, {count=1}),
+    key({},          "_",           function (w, m)    w:zoom_out(zoom_step * m.count, true) end, {count=1}),
+    key({},          "=",           function (w, m)    w:zoom_set(nil, true) end),
+    buf("^z[iI]$",                  function (w, b, m) w:zoom_in(zoom_step  * m.count, b ~= "zI") end, {count=1}),
+    buf("^z[oO]$",                  function (w, b, m) w:zoom_out(zoom_step * m.count, b ~= "zO") end, {count=1}),
     -- Zoom reset or specific zoom ([count]zZ for full content zoom)
     buf("^z[zZ]$",                  function (w, b, m) w:zoom_set(m.count/100, b == "zZ") end, {count=100}),
 
