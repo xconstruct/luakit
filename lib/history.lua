@@ -7,6 +7,7 @@ local os = require "os"
 local webview = webview
 local table = table
 local string = string
+local tonumber = tonumber
 local lousy = require "lousy"
 local capi = { luakit = luakit, sqlite3 = sqlite3 }
 
@@ -39,7 +40,8 @@ function add(uri, title, update_visits)
 
     -- Find exsiting history item
     local results = db:exec(format([[SELECT * FROM history
-        WHERE uri = %s ORDER BY last_visit DESC;]], escape(uri)))
+        WHERE uri = %s AND last_visit >= %d
+        ORDER BY last_visit DESC;]], escape(uri), os.time() - 15*60))
     local item = results[1]
 
     -- Merge duplicate items into the first item
